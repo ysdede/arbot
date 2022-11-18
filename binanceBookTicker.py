@@ -33,26 +33,25 @@ while True:
             status = 0
             print(f"Binance api hatası.\n {e}")
 
-        for i in range(len(data_json)):
-            symbol = data_json[i]["symbol"]
+        for sym in data_json:
+            record['symbol'] = sym[mappings[exchange]['symbol']]
             
-            if not symbol.endswith(tuple(quote_assets[exchange])):
+            if not record['symbol'].endswith(tuple(quote_assets[exchange])):
                 continue
+            
+            record['bidPrice'] = float(sym[mappings[exchange]['bidPrice']])
+            record['askPrice'] = float(sym[mappings[exchange]['askPrice']])
+            record['timestamp'] = d  # TODO: !
+            record['_id'] = int(ts)
+            record['valid'] = 'true'
 
-            bidPrice = float(data_json[i]["bidPrice"])
-            bidQty = float(data_json[i]["bidQty"])
-            askPrice = float(data_json[i]["askPrice"])
-            askQty = float(data_json[i]["askQty"])
-            data_json[i]["timestamp"] = d
-            data_json[i]["_id"] = int(ts)
             try:
-                result = db[symbol].insert_one(data_json[i])
-                dFormatted = (
-                Fore.GREEN + d.strftime("%d/%m/%Y %H:%M:%S") + Style.RESET_ALL)
-                print(f"{dFormatted} Inserted_id: {result.inserted_id}, {symbol}, {askPrice}, {bidPrice}")
-                symbol_done += 1
+                result = db[record['symbol']].insert_one(record)
+                dFormatted = Fore.GREEN + d.strftime('%d/%m/%Y %H:%M:%S') + Style.RESET_ALL
+                print(f"{dFormatted} Inserted_id: {result.inserted_id}, {record['symbol']}, {record['askPrice']}, {record['bidPrice']}")
             except Exception as e:
-                print(f"MongoDB hatası.\n {e}")
+                print(f"{d.strftime('%d/%m/%Y %H:%M:%S')} {e}")
+                continue
 
         print(f"Binance bookTicker done. Processed {symbol_done} symbols in {time.time() - start:0.1f} seconds...")
         client.close()
