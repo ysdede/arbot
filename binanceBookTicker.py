@@ -4,10 +4,10 @@ import pytz, time
 from colorama import init
 from colorama import Fore, Style
 import requests
-from vars import ticker_object, mappings, quote_assets
+from vars import ticker_object, mappings, quote_assets, quote_blacklist, ticker_interval
 init()
 
-interval = 15
+interval = ticker_interval
 # quoteAssets = ["TRY", "USDT"]
 exchange = 'binance'
 client = MongoClient()
@@ -36,7 +36,7 @@ while True:
         for sym in data_json:
             record['symbol'] = sym[mappings[exchange]['symbol']]
             
-            if not record['symbol'].endswith(tuple(quote_assets[exchange])):
+            if not record['symbol'].endswith(tuple(quote_assets[exchange])) or record['symbol'].endswith(tuple(quote_blacklist[exchange])):
                 continue
             
             record['bidPrice'] = float(sym[mappings[exchange]['bidPrice']])
@@ -49,11 +49,12 @@ while True:
                 result = db[record['symbol']].insert_one(record)
                 dFormatted = Fore.GREEN + d.strftime('%d/%m/%Y %H:%M:%S') + Style.RESET_ALL
                 print(f"{dFormatted} Inserted_id: {result.inserted_id}, {record['symbol']}, {record['askPrice']}, {record['bidPrice']}")
+                symbol_done += 1
             except Exception as e:
                 print(f"{d.strftime('%d/%m/%Y %H:%M:%S')} {e}")
                 continue
 
-        print(f"Binance bookTicker done. Processed {symbol_done} symbols in {time.time() - start:0.1f} seconds...")
+        print(f"{exchange} bookTicker done. Processed {symbol_done} symbols in {time.time() - start:0.1f} seconds...")
         client.close()
         time.sleep(0.9)
     time.sleep(0.9)
