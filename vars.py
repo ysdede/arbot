@@ -1,4 +1,7 @@
-ticker_interval = 5
+ticker_interval = 20
+orderbook_interval = 30
+
+paribu_rate_limit = 2000  # ms
 
 ticker_object = {
     "_id": None,
@@ -19,6 +22,14 @@ ticker_object = {
     "change": None,  # TODO: !
 }
 
+orderbook_object = {
+    "_id": None,
+    "timestamp": None,
+    "sells": None,
+    "buys": None,
+    "matches": None,
+    "valid": None,
+}
 
 mappings = {
     "btcturk": {
@@ -59,7 +70,7 @@ mappings = {
 quote_assets = {
     "btcturk": ["USDT", "TRY"],
     "binance": ["USDT", "TRY"],
-    "paribu": ["USDT", "_TL"],
+    "paribu": ["USDT", "_TL", "TRY", "-tl"],
 }
 
 quote_blacklist = {
