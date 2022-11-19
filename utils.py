@@ -6,6 +6,13 @@ from vars import paribu_rate_limit
 # client = MongoClient()
 # db_rate_limit = client.rate_limits
 
+def get_collections(db_name: str) -> list:
+    client = MongoClient()
+    db = client[db_name]
+    collections = db.list_collection_names()
+    client.close()
+    return collections
+
 def store_last_api_call_ts(exchange, timestamp, worker: str = "Unknown"):
     client = MongoClient()
     db_rate_limit = client.rate_limits
@@ -27,6 +34,8 @@ def get_last_api_call_ts(exchange):
         return last_call[0]['timestamp'], last_call[0]['worker']
     except Exception as e:
         print(f"{exchange} get rate limit error.\n {e}")
+        if "no such item for Cursor instance" in str(e):
+            return 1650000000000, "Unknown"
     
     client.close()
 
@@ -43,6 +52,9 @@ def utc_ts_now_ms():
 
 def ts_strf(ts):
     return datetime.utcfromtimestamp(ts / 1000).strftime("%Y-%m-%d %H:%M:%S.%f")
+    
+def dt_strf(dt):
+    return dt.strftime("%Y-%m-%d %H:%M:%S.%f")
 
 def fmt_paribu_symbol(symbol):
     symbol = symbol.replace("_TL", "TRY")
