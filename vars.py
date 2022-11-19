@@ -2,6 +2,7 @@ ticker_interval = 20
 orderbook_interval = 30
 
 paribu_rate_limit = 2000  # ms
+binance_rate_limit = 100  # ms
 
 ticker_object = {
     "_id": None,
