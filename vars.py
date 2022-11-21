@@ -1,8 +1,31 @@
+hedef_derinlik = 50_000
+
 ticker_interval = 20
 orderbook_interval = 30
 
-paribu_rate_limit = 2000  # ms
-binance_rate_limit = 100  # ms
+paribu_rate_limit = 1500  # ms
+binance_rate_limit = 25  # ms
+
+rate_limits = {
+    "paribu": paribu_rate_limit,
+    "binance": binance_rate_limit,
+}
+
+paribu_interval_codes = ["6h"]
+
+orderbook_urls = {
+    "binance": "https://api.binance.com/api/v3/depth?symbol={self.symbol}&limit={self.limit}",
+    "paribu": "https://v3.paribu.com/app/markets/{symbol}?interval={interval}",
+}
+
+http_codes = {
+        "200": "OK",
+        "400": "Bad Request",
+        "401": "Unauthorized",
+        "403": "Forbidden",
+        "404": "Not Found",
+        "429": "Too Many Requests",
+}
 
 ticker_object = {
     "_id": None,
@@ -65,7 +88,7 @@ mappings = {
         "bidQty": None,
         "askQty": None,
         "change": "change",
-    }
+    },
 }
 
 quote_assets = {
@@ -102,16 +125,22 @@ btcturk_ticker_Sample = {
 binance_ticker_sample = '{"symbol":"ETHBTC","bidPrice":"0.07258900","bidQty":"14.06430000","askPrice":"0.07259000","askQty":"0.02020000"}'
 
 paribu_ticker_sample = {
-  "BTC_TL": {
-    "lowestAsk": 318100.01,
-    "highestBid": 317800,
-    "low24hr": 313108,
-    "high24hr": 322356,
-    "avg24hr": 318408.33124565,
-    "volume": "379.89373187",
-    "last": 318100.01,
-    "change": 1767.01,
-    "percentChange": 0.6,
-    "chartData": []
-  }
+    "BTC_TL": {
+        "lowestAsk": 318100.01,
+        "highestBid": 317800,
+        "low24hr": 313108,
+        "high24hr": 322356,
+        "avg24hr": 318408.33124565,
+        "volume": "379.89373187",
+        "last": 318100.01,
+        "change": 1767.01,
+        "percentChange": 0.6,
+        "chartData": [],
+    }
+}
+
+trade_rule_urls = {
+    "Binance": "https://api.binance.com/api/v1/exchangeInfo",
+    "Binance Futures": "https://fapi.binance.com/fapi/v1/exchangeInfo",
+    "Bybit Perpetual": "https://api.bybit.com/v2/public/symbols",
 }
